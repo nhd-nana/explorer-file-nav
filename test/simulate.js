@@ -1,14 +1,38 @@
 'use strict';
 
 /* 独立验证脚本：mock vscode API + 真实文件系统，验证「资源管理器顺序」是否正确。
- * 用法： node test/simulate.js <起始文件> next|prev [sortOrder]
+ * 用法： node test/simulate.js <起始文件> [next|prev] [sortOrder] [preview] [viewType]
+ *   工作区根自动从起始文件向上找 .git / .vscode 推断，也可用环境变量 NAV_ROOT 指定。
  */
 
 const fs = require('fs');
 const path = require('path');
 const Module = require('module');
 
-const ROOT = 'D:\\Code';
+/* 工作区根：VS Code 的工作区 = 打开的那个文件夹，所以优先取**最外层**的 .vscode 目录；
+ * 没有 .vscode 时退回最近的 .git；都无则用盘根。可用环境变量 NAV_ROOT 直接指定。 */
+function inferRoot(startPath) {
+    const abs = path.resolve(startPath);
+    let dir = path.dirname(abs);
+    let outermostVscode = null;
+    let nearestGit = null;
+    for (let i = 0; i < 64; i++) {
+        if (!nearestGit && fs.existsSync(path.join(dir, '.git'))) nearestGit = dir;
+        if (fs.existsSync(path.join(dir, '.vscode'))) outermostVscode = dir;
+        const up = path.dirname(dir);
+        if (up === dir) break;
+        dir = up;
+    }
+    return outermostVscode || nearestGit || path.parse(abs).root;
+}
+
+if (!process.argv[2]) {
+    console.log('用法: node test/simulate.js <起始文件> [next|prev] [sortOrder] [preview] [viewType]');
+    process.exit(1);
+}
+
+const startFile = path.resolve(process.argv[2]);
+const ROOT = process.env.NAV_ROOT || inferRoot(startFile);
 const SORT_ORDER = process.argv[4] || 'default';
 
 const FT = { File: 1, Directory: 2, SymbolicLink: 64 };
@@ -99,7 +123,6 @@ Module._load = function (request, parent, isMain) {
     return origLoad.apply(this, arguments);
 };
 
-const startFile = path.resolve(process.argv[2]);
 const direction = process.argv[3] === 'prev' ? 'previous' : 'next';
 
 if (process.argv[5] === 'preview') {
@@ -119,6 +142,7 @@ ext.activate({ subscriptions: [] });
     await HANDLERS['explorerFileNav.' + direction]();
     const ms = Date.now() - t0;
 
+    console.log('工作区根        :', ROOT);
     console.log('sortOrder      :', SORT_ORDER);
     console.log('起始文件        :', startFile);
     console.log('方向            :', direction === 'next' ? '下一个' : '上一个');
