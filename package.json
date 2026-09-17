@@ -1,0 +1,82 @@
+{
+    "name": "explorer-file-nav",
+    "displayName": "Explorer File Nav — 按资源管理器顺序切换文件",
+    "description": "按左侧资源管理器「显示的顺序」切换上一个 / 下一个文件：完全跟随 explorer.sortOrder（名称 / 类型 / 修改时间 / 创建时间 / filesFirst / mixed），尊重 files.exclude，支持符号链接，瞬时响应（不做全工作区索引）。",
+    "version": "0.0.1",
+    "publisher": "gy903",
+    "license": "MIT",
+    "icon": "resources/icon.png",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "next file",
+        "previous file",
+        "navigation",
+        "explorer order",
+        "file tree"
+    ],
+    "main": "./src/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "explorerFileNav.next",
+                "title": "下一个文件（资源管理器顺序）",
+                "category": "Explorer File Nav"
+            },
+            {
+                "command": "explorerFileNav.previous",
+                "title": "上一个文件（资源管理器顺序）",
+                "category": "Explorer File Nav"
+            },
+            {
+                "command": "explorerFileNav.diagnose",
+                "title": "诊断：当前识别到哪个文件",
+                "category": "Explorer File Nav"
+            }
+        ],
+        "configuration": {
+            "title": "Explorer File Nav",
+            "properties": {
+                "explorerFileNav.wrap": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "到工作区最后一个文件时循环回到第一个（反向同理）。"
+                },
+                "explorerFileNav.skipExcluded": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "跳过 files.exclude 中排除的文件 / 目录，使顺序与资源管理器显示完全一致。"
+                },
+                "explorerFileNav.maxDepth": {
+                    "type": "number",
+                    "default": 30,
+                    "description": "递归下潜的最大深度（用于找「某目录里的第一个/最后一个文件」，同时防止链接环）。"
+                },
+                "explorerFileNav.showTiming": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "在状态栏显示本次查找耗时（调试用）。"
+                },
+                "explorerFileNav.followInExplorer": {
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "reveal",
+                        "collapseAndReveal"
+                    ],
+                    "enumDescriptions": [
+                        "不操作资源管理器（默认）。",
+                        "跳转后在资源管理器中定位并选中当前文件（自动展开其路径，但旧目录保持展开）。",
+                        "跳转后先折叠全部分支，再展开定位到当前文件 —— 资源管理器里始终只有当前文件这一条路径。"
+                    ],
+                    "default": "off",
+                    "description": "跳转后是否让资源管理器跟随当前文件。"
+                }
+            }
+        }
+    }
+}
