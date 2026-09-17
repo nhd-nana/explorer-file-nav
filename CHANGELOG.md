@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.2
+
+- 元数据：补充 `repository` 字段，Marketplace 页面可直接跳转源码仓库
+
 ## 0.0.1
 
 - 首个版本 / Initial release

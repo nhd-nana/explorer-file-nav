@@ -2,10 +2,14 @@
     "name": "explorer-file-nav",
     "displayName": "Explorer File Nav — 按资源管理器顺序切换文件",
     "description": "按左侧资源管理器「显示的顺序」切换上一个 / 下一个文件：完全跟随 explorer.sortOrder（名称 / 类型 / 修改时间 / 创建时间 / filesFirst / mixed），尊重 files.exclude，支持符号链接，瞬时响应（不做全工作区索引）。",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "publisher": "gy903",
     "license": "MIT",
     "icon": "resources/icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nhd-nana/explorer-file-nav.git"
+    },
     "engines": {
         "vscode": "^1.80.0"
     },

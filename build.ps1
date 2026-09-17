@@ -14,7 +14,7 @@ Set-Location $PSScriptRoot
 $j = Get-Content package.json -Raw | ConvertFrom-Json
 Write-Host "打包 $($j.publisher).$($j.name)  v$($j.version)" -ForegroundColor Cyan
 
-npx --yes @vscode/vsce package --allow-missing-repository
+npx --yes @vscode/vsce package
 
 $vsix = Get-ChildItem *.vsix | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 Write-Host ""
