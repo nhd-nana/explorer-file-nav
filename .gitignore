@@ -1,2 +1,12 @@
 node_modules/
 *.vsix
+
+# 防止误提交凭据（本扩展不需要任何密钥，纯本地逻辑）
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+.credentials*
+
